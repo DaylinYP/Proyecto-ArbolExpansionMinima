@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#060f1d">
+  <meta name="description" content="Arbol de expansión mínima con Prim">
+  <title>Método Árbol de Expansión Mínima</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="#inicio" class="brand" aria-label="PROYECTO · IO">
+        <svg class="brand-symbol" viewBox="0 0 35 35" aria-hidden="true">
+          <path d="M6 27 16 7 29 24 6 27 16 7 18 22" stroke="currentColor" stroke-width="1.7" fill="none" />
+          <circle cx="6" cy="27" r="3.5" />
+          <circle cx="16" cy="7" r="3.5" />
+          <circle cx="29" cy="24" r="3.5" />
+          <circle cx="18" cy="22" r="3" />
+        </svg>
+        <span class="brand-wordmark">GRUPO<span>6</span></span>
+      </a>
+      <nav aria-label="Navegación principal"><a href="#laboratorio" class="active">Simulador</a><a href="#metodo">El
+          método</a><a href="#ayuda">Ayuda</a></nav>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <section class="intro container">
+      <div>
+        <p class="eyebrow">INVESTIGACIÓN DE OPERACIONES / 2026</p>
+        <h1>Método <em>Árbol de Expansión Mínima</em></h1>
+      </div>
+      <span class="intro-tag">ALGORITMO DE PRIM <span aria-hidden="true">●</span> SIMULACIÓN INTERACTIVA</span>
+    </section>
+
+    <section class="timeline-strip container" aria-label="Línea de tiempo de Prim">
+      <div class="timeline-head">
+        <div></div>
+        <div class="timeline-progress">PASO <span id="current-step-value">0 / 6</span></div>
+      </div>
+      <div class="timeline-steps" id="timeline-steps" aria-label="Elegir el paso del algoritmo"></div>
+    </section>
+
+    <section class="dashboard container" id="laboratorio" aria-label="Simulador de Prim">
+      <div class="dashboard-layout">
+        <aside class="dashboard-left">
+          <section class="dash-card case-card" aria-labelledby="case-title">
+            <h2 id="case-title" class="card-heading"><span class="heading-icon" aria-hidden="true">◫</span> Caso de
+              estudio</h2>
+            <label class="visually-hidden" for="example-select">Seleccionar caso de estudio</label>
+            <select id="example-select" class="field case-selector">
+              <option value="clase">Abastecimiento de agua</option>
+              <option value="campus">Edificios del campus</option>
+              <option value="incendios">Alerta de incendios forestales</option>
+              <option value="vacio">Crear una red desde cero</option>
+            </select>
+            <p class="case-description" id="case-description">Conectar siete fraccionamientos para abastecimiento de
+              agua utilizando la menor longitud total de tubería posible.</p>
+            <div class="case-metrics">
+              <div class="case-metric"><span class="metric-mini-label">NODOS</span><strong
+                  id="stat-nodes">7</strong><small>en la red</small></div>
+              <div class="case-metric pink"><span class="metric-mini-label">CONEXIONES</span><strong
+                  id="available-edges">10</strong><small>disponibles</small></div>
+            </div>
+          </section>
+
+          <section class="dash-card control-card" aria-labelledby="controls-title">
+            <h2 id="controls-title" class="card-heading"><span class="heading-icon" aria-hidden="true">⚙</span>
+              Controles</h2>
+            <div class="start-selector"><label for="start-node">Nodo inicial</label><select id="start-node"
+                class="field compact"></select></div>
+            <div class="control-buttons">
+              <button id="next" type="button" class="button button-primary">▶ Siguiente paso</button>
+              <button id="solve" type="button" class="button button-outline">⏭ Resolver completo</button>
+              <button id="restart" type="button" class="button button-quiet">↺ Reiniciar</button>
+              <button id="open-editor" type="button" class="button edit-action" aria-expanded="false"
+                aria-controls="editor-drawer">✎ Editar red <span class="button-hint">Agregar nodos y
+                  enlaces</span></button>
+              <button id="open-compare" type="button" class="button compare-action" aria-haspopup="dialog"
+                aria-controls="compare-dialog">⇄ Comparar recorridos</button>
+            </div>
+          </section>
+        </aside>
+
+        <section class="workspace-panel">
+          <section class="dash-card workspace-summary" aria-label="Estado actual del algoritmo">
+            <div class="summary-box summary-step-box">
+              <span class="summary-label">Paso actual</span>
+              <strong id="summary-step-value">0 / 6</strong>
+              <small id="summary-step-caption">Punto de partida</small>
+            </div>
+            <div class="summary-box summary-cost-box">
+              <span class="summary-label" id="cost-caption">Costo acumulado hasta este paso</span>
+              <div class="metric-main"><strong id="total-cost">20</strong><span id="cost-unit">km</span></div>
+            </div>
+            <div class="summary-box summary-edges-box">
+              <span class="summary-label">Enlaces seleccionados</span>
+              <strong id="stat-edges">0 / 6</strong>
+              <small id="network-status" class="summary-inline-status">RED CONECTADA</small>
+            </div>
+            <div class="summary-box summary-solution-box">
+              <div class="summary-solution-head">
+                <span id="solution-label" class="solution-state pending">EN PROCESO</span>
+                <span class="summary-solution-note">Resultado de la ejecución actual</span>
+              </div>
+              <details class="routes-details">
+                <summary>Ver enlaces seleccionados <span>⌄</span></summary>
+                <div class="routes-inner">
+                  <div id="selected-edges" class="selected-edges"></div>
+                  <p id="result-note" class="small-note"></p>
+                </div>
+              </details>
+              <button id="export" class="text-link export-link" type="button">↓ Exportar solución (.txt)</button>
+            </div>
+          </section>
+
+          <section class="dash-card graph-panel" aria-label="Mapa de la red">
+            <div class="graph-topbar">
+              <div>
+                <h2>Mapa principal de la red</h2>
+              </div>
+              <div class="graph-status-wrap"><button type="button" id="focus-mode" class="focus-button"
+                  aria-pressed="false" title="Ampliar el diagrama">⤢ Vista amplia</button></div>
+            </div>
+            <div class="graph-area"><svg id="graph-svg" viewBox="0 0 860 525" role="img"
+                aria-label="Red de nodos con distancias y conexiones seleccionadas" tabindex="0">
+                <title>Árbol de expansión mínima</title>
+              </svg></div>
+            <div class="graph-statusbar">
+              <div><span id="step-kicker" class="step-kicker">PASO 0</span><strong id="step-title">Punto de
+                  partida</strong></div>
+              <span class="graph-status-hint">GRAFO NO DIRIGIDO · PRIM</span>
+            </div>
+            <div id="message" class="message" role="status" aria-live="polite" hidden></div>
+          </section>
+
+          <section class="dash-card analysis-board" aria-labelledby="analysis-title">
+            <div class="analysis-header">
+              <h2 id="analysis-title" class="card-heading"><span class="heading-icon">▥</span> Pizarra de análisis</h2>
+              <span class="aux-caption">Información contextual del paso actual</span>
+            </div>
+            <div class="analysis-tabs" role="tablist" aria-label="Secciones de análisis">
+              <button type="button" class="analysis-tab active" role="tab" aria-selected="true"
+                aria-controls="pane-alternatives" id="tab-alternatives" data-tab="alternatives">Alternativas
+                evaluadas</button>
+              <button type="button" class="analysis-tab" role="tab" aria-selected="false" aria-controls="pane-decision"
+                id="tab-decision" data-tab="decision">Decisión del algoritmo</button>
+              <button type="button" class="analysis-tab" role="tab" aria-selected="false" aria-controls="pane-audit"
+                id="tab-audit" data-tab="audit">Bitácora del algoritmo</button>
+              <button type="button" class="analysis-tab" role="tab" aria-selected="false" aria-controls="pane-rules"
+                id="tab-rules" data-tab="rules">Reglas de Prim</button>
+            </div>
+            <div class="analysis-panes">
+              <section class="analysis-pane active" id="pane-alternatives" role="tabpanel"
+                aria-labelledby="tab-alternatives">
+                <div class="panel-heading-row">
+                  <h3 class="mini-title"><span class="heading-icon">☷</span> Alternativas evaluadas</h3><span
+                    id="alternatives-step" class="panel-counter">PASO 0</span>
+                </div>
+                <p class="table-help" id="alternatives-caption">Conexiones que Prim puede considerar.</p>
+                <div class="data-table-scroll">
+                  <table class="analysis-table">
+                    <thead>
+                      <tr>
+                        <th>Arista</th>
+                        <th>Peso</th>
+                        <th>Estado</th>
+                      </tr>
+                    </thead>
+                    <tbody id="alternatives-body"></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="analysis-pane" id="pane-decision" role="tabpanel" aria-labelledby="tab-decision" hidden>
+                <div class="decision-analysis">
+                  <h3 class="mini-title"><span class="heading-icon">✧</span> Decisión del algoritmo</h3>
+                  <div class="decision-insight"><strong id="decision-headline">Punto de partida</strong>
+                    <p id="decision-text">Prim busca la arista de menor peso que conecte un nodo visitado con uno
+                      pendiente.</p>
+                  </div>
+                  <div class="decision-progress"><span id="step-count">0 de 6</span>
+                    <div class="progress-track">
+                      <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                  </div>
+                  <p class="visually-hidden" id="step-description"></p>
+                </div>
+              </section>
+
+              <section class="analysis-pane" id="pane-audit" role="tabpanel" aria-labelledby="tab-audit" hidden>
+                <div class="panel-heading-row">
+                  <h3 class="mini-title"><span class="heading-icon">▤</span> Bitácora del algoritmo</h3><span
+                    class="aux-caption">Registro de decisiones</span>
+                </div>
+                <div class="data-table-scroll">
+                  <table class="analysis-table audit-table">
+                    <thead>
+                      <tr>
+                        <th>Paso</th>
+                        <th>Arista elegida</th>
+                        <th>Peso</th>
+                        <th>Total acumulado</th>
+                        <th>Nodos conectados</th>
+                      </tr>
+                    </thead>
+                    <tbody id="audit-rows"></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="analysis-pane" id="pane-rules" role="tabpanel" aria-labelledby="tab-rules" hidden>
+                <div class="rules-card-inner">
+                  <h3 class="mini-title"><span class="heading-icon">▧</span> Reglas del algoritmo de Prim</h3>
+                  <ol class="prim-rules">
+                    <li>Selecciona un nodo inicial.</li>
+                    <li>Revisa las aristas entre nodos visitados y no visitados.</li>
+                    <li>Elige la conexión válida de menor peso.</li>
+                    <li>Incorpora el nuevo nodo al árbol.</li>
+                    <li>Repite hasta conectar todos los nodos.</li>
+                    <li>No se forman ciclos; un árbol de <i>n</i> nodos usa <i>n − 1</i> enlaces.</li>
+                  </ol>
+                </div>
+              </section>
+            </div>
+          </section>
+
+          <section id="final-summary" class="dash-card final-summary" aria-labelledby="summary-title" hidden>
+            <div class="final-summary-head">
+              <div>
+                <h2 id="summary-title" class="card-heading"><span class="heading-icon" aria-hidden="true">✓</span>
+                  Resumen final del algoritmo</h2>
+                <p class="final-summary-subtitle">Conclusión del recorrido actual</p>
+              </div>
+              <span id="summary-status" class="summary-status">Árbol encontrado</span>
+            </div>
+            <div class="summary-content">
+              <div class="summary-stats">
+                <div><small>Nodos conectados</small><strong id="summary-nodes">0 / 0</strong></div>
+                <div><small>Enlaces elegidos</small><strong id="summary-edges">0 / 0</strong></div>
+                <div><small>Costo de la red</small><strong id="summary-cost">0 km</strong></div>
+              </div>
+              <p id="summary-explanation" class="summary-explanation"></p>
+            </div>
+          </section>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="compare-dialog" class="compare-dialog" aria-labelledby="compare-title">
+    <div class="compare-header">
+      <div>
+        <p class="compare-kicker">EXPLORACIÓN DE PRIM</p>
+        <h2 id="compare-title">Comparar recorridos</h2>
+        <p>Selecciona dos puntos de partida para comparar el orden en que Prim construye la red.</p>
+      </div>
+      <button id="close-compare" class="compare-close" type="button" aria-label="Cerrar comparación">×</button>
+    </div>
+    <form id="compare-form" class="compare-form">
+      <label>Primer nodo inicial<select id="compare-start-a" class="field" required></select></label>
+      <label>Segundo nodo inicial<select id="compare-start-b" class="field" required></select></label>
+      <button type="submit" class="button compare-submit">⇄ Comparar</button>
+    </form>
+    <div id="compare-output" class="compare-output" aria-live="polite"></div>
+  </dialog>
+
+  <div id="editor-backdrop" class="editor-backdrop" aria-hidden="true"></div>
+  <aside id="editor-drawer" class="editor-sidepanel" aria-hidden="true" aria-label="Editor de red">
+    <div class="editor-header">
+      <div><span class="panel-kicker">HERRAMIENTAS DE RED</span>
+        <h2>Editar red</h2>
+        <p>Agrega nodos, define sus conexiones y modifica costos.</p>
+      </div><button type="button" id="close-editor" class="editor-close" aria-label="Cerrar el editor">×</button>
+    </div>
+    <div class="editor-inner">
+      <div class="controls-scroll">
+        <div class="control-section">
+          <div class="control-group-heading">
+            <h3><span class="control-dot dot-cyan"></span> Nodos <span id="node-count" class="count-tag">7</span></h3>
+            <span class="hint-text">Puntos a conectar</span>
+          </div>
+          <div id="node-list" class="node-list" aria-label="Lista de nodos"></div>
+          <form id="node-form" class="inline-form"><input type="text" class="field" id="new-node"
+              placeholder="Nombre del nodo" maxlength="16" aria-label="Nombre del nuevo nodo" required><button
+              class="button button-outline icon-button" aria-label="Agregar nodo" title="Agregar nodo"
+              type="submit">＋</button></form>
+        </div>
+        <div class="control-section">
+          <div class="control-group-heading">
+            <h3><span class="control-dot dot-fuchsia"></span> Conexiones <span id="edge-count"
+                class="count-tag">10</span></h3><span class="hint-text">Costos unitarios</span>
+          </div>
+          <div id="edge-list" class="edge-list" aria-label="Conexiones existentes"></div>
+          <div class="new-edge-title">AGREGAR CONEXIÓN</div>
+          <form id="edge-form" class="edge-form">
+            <div class="double-field"><label>Desde<select class="field" id="edge-from"
+                  required></select></label><label>Hasta<select class="field" id="edge-to" required></select></label>
+            </div>
+            <div class="edge-add-bottom"><label>Distancia / costo<input type="number" min="0.01" step="any"
+                  class="field" id="edge-weight" value="4" required></label><button type="submit"
+                class="button button-outline">Añadir</button></div>
+          </form>
+        </div>
+        <div class="control-footer-row"><button id="reset-example" class="reset-link" type="button">↺ Restablecer
+            ejemplo</button></div>
+      </div>
+    </div>
+  </aside>
+
+  <footer class="site-footer container"><span>GRUPO 6 / Investigación de Operaciones</span><span></span></footer>
+  <script src="algoritmo.js"></script>
+  <script src="ui.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
